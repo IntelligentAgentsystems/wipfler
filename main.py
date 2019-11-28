@@ -5,6 +5,8 @@ from time import sleep
 from ping_actor import PingActor
 from pong_actor import PongActor
 
+from conveyor_belt import *
+
 # consumer = ConsumerActor()
 # producer = ProducerActor(consumer=consumer)
 #
@@ -18,17 +20,24 @@ from pong_actor import PongActor
 # consumer.stop()
 # print('done')
 
-pinger = PingActor.start()
-ponger = PongActor.start()
+# pinger = PingActor.start()
+# ponger = PongActor.start()
+#
+# ponger.ask('Ping')
+#
+# sleep(5)
+#
+# pinger.stop()
+# ponger.stop()
+#
+# sleep(2)
+#
+c1 = ConveyorBelt((0, 0))
+print(c1.direction)
+for i in range(0, 10):
+    c1.turn_counter_clockwise()
+    print(c1.direction)
 
-ponger.ask('Ping')
-
-
-sleep(5)
-
-pinger.stop()
-ponger.stop()
-
-sleep(2)
 
 print('Terminate main')
+
