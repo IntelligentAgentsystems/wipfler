@@ -1,6 +1,4 @@
-from typing import Tuple
-
-from abstract_sheet import *
+from Sheets.abstract_sheet import *
 
 
 class Sheet(AbstractSheet):

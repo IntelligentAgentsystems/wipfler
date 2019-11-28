@@ -1,5 +1,5 @@
 import pykka
-import urns
+from Demos import urns
 import time
 
 

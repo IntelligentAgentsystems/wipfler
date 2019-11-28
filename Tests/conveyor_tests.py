@@ -1,8 +1,8 @@
 import unittest
 
-from conveyor_belt import *
+from Units.conveyor_belt import *
 import time
-from sheet import Sheet
+from Sheets.sheet import Sheet
 
 TURN_DURATION_SECONDS = .1
 

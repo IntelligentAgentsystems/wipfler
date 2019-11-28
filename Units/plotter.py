@@ -1,6 +1,6 @@
 from typing import Tuple
-from abstract_sheet import Color
-from functional_unit import FunctionalUnit
+from Sheets.abstract_sheet import Color
+from Units.functional_unit import FunctionalUnit
 import time
 
 

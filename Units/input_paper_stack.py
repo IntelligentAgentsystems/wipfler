@@ -1,7 +1,7 @@
 from typing import Tuple
 
-from functional_unit import FunctionalUnit
-from sheet import Sheet
+from Units.functional_unit import FunctionalUnit
+from Sheets.sheet import Sheet
 
 
 class InputPaperStack(FunctionalUnit):

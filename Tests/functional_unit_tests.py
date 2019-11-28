@@ -1,7 +1,7 @@
 import unittest
 
-from functional_unit import *
-from sheet import Sheet
+from Units.functional_unit import *
+from Sheets.sheet import Sheet
 
 
 class FunctionalUnitTest(unittest.TestCase):

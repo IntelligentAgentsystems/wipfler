@@ -1,11 +1,4 @@
-from producer_actor import ProducerActor
-from consumer_actor import ConsumerActor
-from time import sleep
-
-from ping_actor import PingActor
-from pong_actor import PongActor
-
-from conveyor_belt import *
+from Units.conveyor_belt import *
 
 # consumer = ConsumerActor()
 # producer = ProducerActor(consumer=consumer)

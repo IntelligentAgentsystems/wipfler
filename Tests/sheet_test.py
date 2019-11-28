@@ -1,8 +1,7 @@
 import unittest
 
-import time
-from sheet import *
-from sheet_order import *
+from Sheets.sheet import *
+from Sheets.sheet_order import *
 
 
 class SheetTest(unittest.TestCase):
