@@ -4,6 +4,7 @@ from Units.plotter import *
 import time
 from Sheets.sheet import Sheet
 from Sheets.sheet_order import SheetOrder
+from Units.unit_system import UnitSystem
 
 PLOT_DURATION_SECONDS = .1
 
@@ -11,7 +12,7 @@ PLOT_DURATION_SECONDS = .1
 class PlotterTest(unittest.TestCase):
 
     def test_plot(self):
-        plotter = Plotter((0, 0), Color.Red, plot_duration_seconds=PLOT_DURATION_SECONDS)
+        plotter = Plotter(None, (0, 0), Color.Red, plot_duration_seconds=PLOT_DURATION_SECONDS)
         plotter.sheet = Sheet()
         plotter.plot()
         sheet_order = SheetOrder({
@@ -21,18 +22,18 @@ class PlotterTest(unittest.TestCase):
 
     def test_plot_twice_immediately(self):
         with self.assertRaises(PlotterBusyError):
-            plotter = Plotter((0, 0), Color.Red, plot_duration_seconds=999)
+            plotter = Plotter(None, (0, 0), Color.Red, plot_duration_seconds=999)
             plotter.sheet = Sheet()
             plotter.plot()
             plotter.plot()
 
     def test_plot_no_sheet(self):
         with self.assertRaises(NoSheetToPlotError):
-            plotter = Plotter((0, 0), Color.Red, plot_duration_seconds=PLOT_DURATION_SECONDS)
+            plotter = Plotter(None, (0, 0), Color.Red, plot_duration_seconds=PLOT_DURATION_SECONDS)
             plotter.plot()
 
     def test_plot_twice_but_wait(self):
-        plotter = Plotter((0, 0), Color.Red, plot_duration_seconds=PLOT_DURATION_SECONDS)
+        plotter = Plotter(None, (0, 0), Color.Red, plot_duration_seconds=PLOT_DURATION_SECONDS)
         plotter.sheet = Sheet()
         plotter.plot()
         time.sleep(PLOT_DURATION_SECONDS)

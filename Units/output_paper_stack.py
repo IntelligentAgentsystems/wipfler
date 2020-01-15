@@ -1,13 +1,15 @@
 from typing import Tuple
+
+from Sheets.sheet import Sheet
 from Units.functional_unit import FunctionalUnit
+from constants import Direction
 
 
 class OutputPaperStack(FunctionalUnit):
 
-    def __init__(self, location: Tuple[int, int]):
-        super().__init__(location)
+    def __init__(self, unit_system: 'UnitSystem', location: Tuple[int, int]):
+        super().__init__(unit_system, location)
         self.received_sheets = []
 
-    def receive_sheet_from(self, other_unit: FunctionalUnit):
-        super().receive_sheet_from(other_unit)
-        self.received_sheets.append(self.sheet)
+    def on_receive(self, sheet: Sheet, direction: Direction):
+        self.received_sheets.append(sheet)

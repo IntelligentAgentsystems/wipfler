@@ -1,13 +1,17 @@
 from typing import Tuple
 from Sheets.abstract_sheet import Color
-from Units.functional_unit import FunctionalUnit
+from Sheets.sheet import Sheet
+from Units.functional_unit import FunctionalUnit, UnitOccupiedError, NoSheetError
 import time
+
+from constants import Direction
 
 
 class Plotter(FunctionalUnit):
 
-    def __init__(self, location: Tuple[int, int], color: Color, plot_duration_seconds: float = 2):
-        super().__init__(location)
+    def __init__(self, unit_system: 'UnitSystem', location: Tuple[int, int], color: Color, plot_duration_seconds: float = 2):
+        super().__init__(unit_system, location)
+        self.sheet: Sheet = None
         self.color = color
         self.plot_duration_seconds = plot_duration_seconds
         self.last_plot_start_seconds = 0
@@ -22,6 +26,20 @@ class Plotter(FunctionalUnit):
 
     def is_plotting(self) -> bool:
         return time.time() < self.last_plot_start_seconds + self.plot_duration_seconds
+
+    def on_receive(self, sheet: Sheet, direction: Direction):
+        if self.sheet is not None:
+            raise UnitOccupiedError(self)
+        self.sheet = sheet
+
+    def on_take(self, direction: Direction) -> Sheet:
+        if self.sheet is None:
+            raise NoSheetError(self)
+        if self.is_plotting():
+            raise UnitOccupiedError(self)
+        tmp = self.sheet
+        self.sheet = None
+        return tmp
 
 
 class NoSheetToPlotError(Exception):
