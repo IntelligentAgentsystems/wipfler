@@ -1,0 +1,6 @@
+UNIT_TYPE_KEY = "unit_type"
+COLOR_KEY = "color"
+PLOTTER_TYPE = "plotter"
+CONVEYOR_TYPE = "conveyor"
+INPUTPAPERSTACK_TYPE = "inputpaperstack"
+OUTPUTPAPERSTACK_TYPE = "outpaperstack"
