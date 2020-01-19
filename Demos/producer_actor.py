@@ -1,7 +1,8 @@
-import pykka
 import random
 import threading
 from time import sleep
+
+import pykka
 
 
 class ProducerActor(pykka.ThreadingActor):
@@ -24,4 +25,3 @@ class ProducerActor(pykka.ThreadingActor):
 
     def stop(self):
         self._is_up = False
-

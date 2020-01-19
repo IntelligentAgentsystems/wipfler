@@ -1,13 +1,15 @@
 import logging
-import time
 from typing import List
 
 from Actors.conveyor_actor import ConveyorActor
 from Actors.input_actor import InputActor
 from Actors.output_actor import OutputActor
 from Actors.plotter_actor import PlotterActor
+from Actors.sleepy_actor import SleepyActor
 from Actors.supervisor_actor import SupervisorActor
+from Messages import SheetOrderMessage
 from Sheets.abstract_sheet import Color
+from Sheets.sheet_order import SheetOrder
 from Units.functional_unit import FunctionalUnit
 from Units.unit_system import UnitSystem
 
@@ -23,18 +25,27 @@ def create_functional_units_and_actors(sys: UnitSystem) -> List[FunctionalUnit]:
         ConveyorActor.start(sys.create_conveyor((2, 1))),
         PlotterActor.start(sys.create_plotter((1, 0), color=Color.Red)),
         PlotterActor.start(sys.create_plotter((2, 0), color=Color.Green)),
-        PlotterActor.start(sys.create_plotter((1, 3), color=Color.Yellow)),
-        PlotterActor.start(sys.create_plotter((2, 3), color=Color.Blue))]
+        PlotterActor.start(sys.create_plotter((1, 2), color=Color.Yellow)),
+        PlotterActor.start(sys.create_plotter((2, 2), color=Color.Blue))]
 
 
 def main():
     unit_system = UnitSystem()
     supervisor = SupervisorActor.start()
     worker_actors = create_functional_units_and_actors(unit_system)
-    time.sleep(200)
+    for sheet_order in [
+        SheetOrder({Color.Red: 1}),
+        SheetOrder({Color.Blue: 1}),
+        SheetOrder({Color.Green: 1}),
+        SheetOrder({Color.Yellow: 1}),
+        SheetOrder({Color.Red: 1, Color.Yellow: 1}),
+        SheetOrder({Color.Yellow: 1, Color.Green: 1})
+    ]:
+        supervisor.tell(SheetOrderMessage(sheet_order))
+    SleepyActor.start(500).stop()
     for w_actor in worker_actors:
-        w_actor.stop(block=True)
-    supervisor.stop(block=True)
+        w_actor.stop()
+    supervisor.stop()
 
 
 if __name__ == '__main__':

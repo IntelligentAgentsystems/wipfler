@@ -4,7 +4,8 @@ from typing import List, Dict
 from pykka import ThreadingActor, ActorRef
 
 import constants as const
-from Messages import RegistrationMessage, InteractWithMessage, Action, InstructionRequest, SheetOrderMessage
+from Messages import RegistrationMessage, InteractWithMessage, Action, InstructionRequest, SheetOrderMessage, \
+    InteractWithPlotterMessage, InteractWithConveyorMessage
 from Sheets.sheet_order import SheetOrder
 from Types.custom_types import Location
 from util import distance
@@ -50,10 +51,11 @@ class SupervisorActor(ThreadingActor):
                 possible_plotter = self._reachable_actor_where(actor_ref, {const.UNIT_TYPE_KEY: const.PLOTTER_TYPE,
                                                                            const.COLOR_KEY: c})
                 if possible_plotter is not None:
-                    actor_ref.tell(InteractWithMessage(self.actor_locations[possible_plotter][0], Action.GIVETAKE,
-                                                       possible_plotter))
-                    logging.log(logging.DEBUG,
-                                f'SPV: Actor at {self.actor_locations[message.actor_ref][0]} instructed to give and take with Actor at {self.actor_locations[possible_plotter]}')
+                    actor_ref.tell(
+                        InteractWithPlotterMessage(self.actor_locations[possible_plotter][0], possible_plotter))
+                    logging.log(logging.DEBUG, f'SPV: Actor at {self.actor_locations[message.actor_ref][0]} instructed '
+                                               f'to give and take with Actor '
+                                               f'at {self.actor_locations[possible_plotter]}')
                     self.active_orders[actor_ref].color_was_plotted(c)
                     return
             possible_output_stack = self._reachable_actor_where(actor_ref,
@@ -61,35 +63,38 @@ class SupervisorActor(ThreadingActor):
             if possible_output_stack is not None and self.active_orders[actor_ref].is_completed():
                 actor_ref.tell(InteractWithMessage(self.actor_locations[possible_output_stack][0], Action.GIVE))
                 logging.log(logging.DEBUG,
-                            f'SPV: Actor at {self.actor_locations[message.actor_ref][0]} instructed to give sheet to Actor at {self.actor_locations[possible_output_stack]}')
+                            f'SPV: Actor at {self.actor_locations[message.actor_ref][0]} instructed'
+                            f' to give sheet to Actor at {self.actor_locations[possible_output_stack]}')
                 completed_order = self.active_orders[actor_ref]
                 del self.active_orders[actor_ref]
                 self.closed_orders.append(completed_order)
                 return
             possible_conveyor = self._reachable_actor_where(actor_ref, {const.UNIT_TYPE_KEY: const.CONVEYOR_TYPE})
             if possible_conveyor is not None:
-                actor_ref.tell(InteractWithMessage(self.actor_locations[possible_conveyor], Action.GIVE))
+                # hat to make this as ask
+                # can only move order in active_orders
+                # after sheet was really given, otherwise inconsistant
+                actor_ref.ask(
+                    InteractWithConveyorMessage(self.actor_locations[possible_conveyor][0], possible_conveyor))
                 logging.log(logging.DEBUG,
-                            f'SPV: Actor at {self.actor_locations[message.actor_ref][0]} instructed to give sheet to Actor at {self.actor_locations[possible_conveyor]}')
+                            f'SPV: Actor at {self.actor_locations[message.actor_ref][0]} instructed '
+                            f'to give sheet to Actor at {self.actor_locations[possible_conveyor]}')
+                order = self.active_orders[actor_ref]
+                del self.active_orders[actor_ref]
+                self.active_orders[possible_conveyor] = order
                 return
             raise NotImplementedError("Souldn't reach this")
         else:  # conveyor needs sheet
             possible_input_stack = self._reachable_actor_where(actor_ref,
                                                                {const.UNIT_TYPE_KEY: const.INPUTPAPERSTACK_TYPE})
-            if possible_input_stack is not None:
-                if (self.open_orders):
-                    actor_ref.tell(InteractWithMessage(self.actor_locations[possible_input_stack][0], Action.TAKE))
-                    logging.log(logging.DEBUG,
-                                f'SPV: Actor at {self.actor_locations[message.actor_ref][0]} instructed to take sheet from Actor at {self.actor_locations[possible_input_stack][0]}')
-                    order = self.open_orders.pop(0)
-                    self.active_orders[actor_ref] = order
-                else:
-                    logging.log(logging.DEBUG, f'SPV: Nothing to do for Actor at {self.actor_locations[actor_ref]}')
-
+            if possible_input_stack is not None and self.open_orders:
+                actor_ref.tell(InteractWithMessage(self.actor_locations[possible_input_stack][0], Action.TAKE))
+                logging.log(logging.DEBUG,
+                            f'SPV: Actor at {self.actor_locations[message.actor_ref][0]} instructed to take sheet from Actor at {self.actor_locations[possible_input_stack][0]}')
+                order = self.open_orders.pop(0)
+                self.active_orders[actor_ref] = order
             else:
-                raise Exception()
-            # else:  # Nothing actor can do, maybe other actor fell out
-            #     actor_ref.tell(WaitMessage())
+                logging.log(logging.DEBUG, f'SPV: Nothing to do for Actor at {self.actor_locations[actor_ref]}')
 
     def _handle_sheet_order_message(self, message: SheetOrderMessage):
         self.open_orders.append(message.order)

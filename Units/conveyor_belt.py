@@ -55,6 +55,8 @@ class ConveyorBelt(FunctionalUnit):
         self.sheet = sheet
 
     def put(self):
+        if self.sheet is None:
+            raise NoSheetToPutError(self)
         if self.is_turning():
             raise ConveyorTurningError(self)
         loc_of_other_unit = util.move_location(self.location, self.direction)
@@ -71,3 +73,8 @@ class ConveyorFacingAwayError(Exception):
 class ConveyorTurningError(Exception):
     def __init__(self, conveyor: ConveyorBelt):
         super().__init__(f'{conveyor.location} is still turning')
+
+
+class NoSheetToPutError(Exception):
+    def __init__(self, conveyor: ConveyorBelt):
+        super().__init__(f'{conveyor.location} has no sheet to put')

@@ -7,15 +7,6 @@ from Sheets.sheet_order import SheetOrder
 from Types.custom_types import Location
 
 
-# class Message:
-#     pass
-#
-#
-# class ObjectMessage:
-#     def __init__(self, body: object):
-#         self.body = body
-
-
 class InstructionRequest:
     def __init__(self, actor_ref: ActorRef):
         self.actor_ref = actor_ref
@@ -24,27 +15,42 @@ class InstructionRequest:
 class Action(Enum):
     GIVE = 0
     TAKE = 1
-    GIVETAKE = 2
 
 
-class InteractWithMessage:
+class BaseInteractionMessage:
 
-    def __init__(self, location: Location, action: Action, actor_ref: ActorRef = None):
+    def __init__(self, location: Location):
         self.location = location
+
+
+class InteractWithMessage(BaseInteractionMessage):
+
+    def __init__(self, location: Location, action: Action):
+        super().__init__(location)
         self.action = action
+
+
+class InteractWithPlotterMessage(BaseInteractionMessage):
+
+    def __init__(self, location: Location, actor_ref: ActorRef):
+        super().__init__(location)
         self.actor_ref = actor_ref
 
 
-# class PlotMessage:
-#     def __init__(self, requesting_actor: ActorRef):
-#         self.requesting_actor = requesting_actor
-#
-#
-# class PlotDoneMessage:
-#     pass
+class InteractWithConveyorMessage(BaseInteractionMessage):
 
-class PerformActionMessage:
+    def __init__(self, location: Location, actor_ref: ActorRef):
+        super().__init__(location)
+        self.actor_ref = actor_ref
+
+
+class TurnTowardsMessage(BaseInteractionMessage):
     pass
+
+
+class PlotMessage:
+    pass
+
 
 class RegistrationMessage:
     def __init__(self, actor_ref: ActorRef, location: Location, attributes: Dict[str, object] = {}):
@@ -63,14 +69,6 @@ class RequestOrderMessage:
         self.actor_ref = actor_ref
 
 
-#
-# class WaitMessage:
-#     pass
-
 class SheetOrderMessage:
     def __init__(self, order: SheetOrder):
         self.order = order
-
-
-class ReminderMessage:
-    pass

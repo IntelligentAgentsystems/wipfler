@@ -1,13 +1,13 @@
 import time
 import unittest
 
+from Actors.conveyor_actor import ConveyorActor
 from Actors.plotter_actor import PlotterActor
 from Messages import InteractWithMessage, Action, PlotMessage
 from Sheets.abstract_sheet import Color
+from Units.conveyor_belt import ConveyorBelt
 from Units.input_paper_stack import InputPaperStack
 from Units.output_paper_stack import OutputPaperStack
-from Units.conveyor_belt import ConveyorBelt
-from Actors.conveyor_actor import ConveyorActor
 from Units.plotter import Plotter
 
 

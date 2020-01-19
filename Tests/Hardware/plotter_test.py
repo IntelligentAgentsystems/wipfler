@@ -1,10 +1,9 @@
+import time
 import unittest
 
-from Units.plotter import *
-import time
 from Sheets.sheet import Sheet
 from Sheets.sheet_order import SheetOrder
-from Units.unit_system import UnitSystem
+from Units.plotter import *
 
 PLOT_DURATION_SECONDS = .1
 

@@ -5,9 +5,9 @@ from pykka import ActorRef, ActorRegistry
 import constants as const
 import util
 from Actors.operator_actor import OperatorActor
-from Actors.reminder_actor import ReminderActor
 from Actors.supervisor_actor import SupervisorActor
-from Messages import InteractWithMessage, Action, PerformActionMessage, ReminderMessage, InstructionRequest
+from Messages import InteractWithMessage, Action, PlotMessage, InstructionRequest, \
+    InteractWithPlotterMessage, InteractWithConveyorMessage, TurnTowardsMessage, BaseInteractionMessage
 from Types.custom_types import Location
 from Units.conveyor_belt import ConveyorBelt
 
@@ -25,9 +25,26 @@ class ConveyorActor(OperatorActor):
         self._register(self.conveyor.location, {const.UNIT_TYPE_KEY: const.CONVEYOR_TYPE})
         self.supervisor = ActorRegistry().get_by_class(SupervisorActor)[0]
 
-    def _handle_interact_with_message(self, message: InteractWithMessage):
+    def _handle_interact_with_plotter_message(self, message: InteractWithPlotterMessage):
+        other_actor = message.actor_ref
+        self.conveyor.put()
+        other_actor.ask(PlotMessage(), block=True)
+        self.conveyor.take()
+
+    def _handle_interact_with_conveyor_message(self, message: InteractWithConveyorMessage):
+        logging.log(logging.DEBUG,
+                    f'CVB: Conveyor at {self.conveyor.location} gives sheet to Covneyor at {message.location}')
+        other_actor = message.actor_ref
+        other_actor.ask(TurnTowardsMessage(self.conveyor.location), block=True)
+        self.conveyor.put()
+        self.supervisor.tell(InstructionRequest(other_actor))
+
+    def _handle_turn_towards_message(self, message: TurnTowardsMessage):
         location = message.location
         self.turn_towards(location)
+        return
+
+    def _handle_interact_with_message(self, message: InteractWithMessage):
         if message.action == Action.GIVE:
             self.conveyor.put()
             logging.log(logging.DEBUG,
@@ -36,18 +53,22 @@ class ConveyorActor(OperatorActor):
             self.conveyor.take()
             logging.log(logging.DEBUG,
                         f'CVB: Conveyor at {self.conveyor.location} took sheet from Actor at {message.location}')
-        else:  # message.action == Action.GIVETAKE
-            other_actor = message.actor_ref
-            self.conveyor.put()
-            other_actor.ask(PerformActionMessage(), block=True)
-            self.conveyor.take()
 
     def on_receive(self, message):
-        if isinstance(message, InteractWithMessage):
-            self._handle_interact_with_message(message)
-        self.supervisor.tell(InstructionRequest(self.actor_ref))
-
-
+        if isinstance(message, BaseInteractionMessage):
+            location = message.location
+            self.turn_towards(location)
+            if isinstance(message, InteractWithPlotterMessage):
+                self._handle_interact_with_plotter_message(message)
+            elif isinstance(message, InteractWithConveyorMessage):
+                self._handle_interact_with_conveyor_message(message)
+            elif isinstance(message, InteractWithMessage):
+                self._handle_interact_with_message(message)
+            elif isinstance(message, TurnTowardsMessage):
+                self._handle_turn_towards_message(message)
+            # ask for further instructions
+            if not isinstance(message, TurnTowardsMessage):
+                self.supervisor.tell(InstructionRequest(self.actor_ref))
 
     def turn_towards(self, location: Location):
         target_direction = util.relative_direction_of(location, self.conveyor.location)

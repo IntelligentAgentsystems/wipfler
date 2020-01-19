@@ -1,5 +1,5 @@
 from typing import NewType, Tuple, Dict
-from collections import namedtuple
+
 from pykka import ActorRef
 
 # name of machine and attributes

@@ -1,5 +1,6 @@
 import pykka
 
+
 class ConsumerActor(pykka.ThreadingActor):
 
     def __init__(self):

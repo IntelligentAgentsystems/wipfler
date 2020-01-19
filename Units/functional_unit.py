@@ -1,8 +1,7 @@
-from Types.custom_types import Location
-from typing import Tuple, Dict
-
 from Sheets.sheet import Sheet
+from Types.custom_types import Location
 from constants import Direction
+
 
 class FunctionalUnit:
     """

@@ -21,7 +21,8 @@ class UnitSystem:
         elif util.distance(location, source_location) > 1:
             raise UnitsToFarApartError(location, source_location)
         else:
-            return self.unit_locations[location].on_receive(sheet, util.relative_direction_of(location, source_location))
+            return self.unit_locations[location].on_receive(sheet,
+                                                            util.relative_direction_of(location, source_location))
 
     def take_from_unit_at(self, location: Location, source_location: Location) -> Sheet:
         if location not in self.unit_locations:
@@ -56,6 +57,7 @@ class NoUnitAtLocationError(Exception):
 
     def __init__(self, location: Location):
         super().__init__(f'UnitSystem has no Unit at {location}')
+
 
 class UnitsToFarApartError(Exception):
 

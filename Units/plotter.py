@@ -1,15 +1,16 @@
+import time
 from typing import Tuple
+
 from Sheets.abstract_sheet import Color
 from Sheets.sheet import Sheet
 from Units.functional_unit import FunctionalUnit, UnitOccupiedError, NoSheetError
-import time
-
 from constants import Direction
 
 
 class Plotter(FunctionalUnit):
 
-    def __init__(self, unit_system: 'UnitSystem', location: Tuple[int, int], color: Color, plot_duration_seconds: float = 2):
+    def __init__(self, unit_system: 'UnitSystem', location: Tuple[int, int], color: Color,
+                 plot_duration_seconds: float = 2):
         super().__init__(unit_system, location)
         self.sheet: Sheet = None
         self.color = color

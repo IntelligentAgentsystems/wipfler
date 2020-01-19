@@ -7,6 +7,7 @@ CONVEYOR_TYPE = "conveyor"
 INPUTPAPERSTACK_TYPE = "inputpaperstack"
 OUTPUTPAPERSTACK_TYPE = "outpaperstack"
 
+
 class Direction(Enum):
     North = 0
     East = 1

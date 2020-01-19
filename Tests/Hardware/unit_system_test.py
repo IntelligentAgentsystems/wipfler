@@ -1,12 +1,16 @@
 import time
 import unittest
 
+from pykka import Future
+
 from Sheets.abstract_sheet import Color
 from Sheets.sheet import Sheet
 from Units.unit_system import UnitSystem
 
 
 class FunctionalUnitTest(unittest.TestCase):
+    def __init__(self):
+        self.done = Future()
 
     def test_unit_creation(self):
         sys = UnitSystem()
@@ -42,5 +46,3 @@ class FunctionalUnitTest(unittest.TestCase):
         sheet.plots[Color.Red] = 42
         sys.drop_to_unit_at(sheet, location, (0, 1))
         self.assertIn(sheet, ops.received_sheets)
-
-

@@ -1,12 +1,9 @@
 import logging
-from typing import Dict, List
+
+from pykka import ThreadingActor, ActorRegistry
 
 from Actors.supervisor_actor import SupervisorActor
-from Types.custom_types import UnitRoutingMap
-from pykka import ThreadingActor, ActorRegistry, ActorRef
 from Messages import *
-
-from Units.functional_unit import FunctionalUnit
 
 
 class OperatorActor(ThreadingActor):

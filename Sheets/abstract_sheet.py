@@ -1,6 +1,6 @@
-from typing import Tuple, Dict
 from collections import defaultdict
 from enum import Enum
+from typing import Dict
 
 
 class AbstractSheet:

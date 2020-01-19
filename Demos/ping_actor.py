@@ -1,6 +1,8 @@
-import pykka
-from Demos import urns
 import time
+
+import pykka
+
+from Demos import urns
 
 
 class PingActor(pykka.ThreadingActor):
@@ -22,4 +24,3 @@ class PingActor(pykka.ThreadingActor):
     def on_stop(self):
         print(f'Stopped {self.__class__.__name__}')
         super().on_stop()
-

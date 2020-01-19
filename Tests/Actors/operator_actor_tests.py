@@ -1,10 +1,10 @@
+import time
 import unittest
+
+from pykka import ActorRegistry
 
 from Actors.operator_actor import OperatorActor
 from Units.functional_unit import FunctionalUnit
-
-import time
-from pykka import ActorRegistry
 
 
 class FunctionalUnitTest(unittest.TestCase):

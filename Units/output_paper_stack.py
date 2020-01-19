@@ -1,14 +1,15 @@
 from threading import Thread
-from typing import Tuple, List, Callable
+from typing import List, Callable
 
 from Sheets.sheet import Sheet
+from Types.custom_types import Location
 from Units.functional_unit import FunctionalUnit
 from constants import Direction
 
 
 class OutputPaperStack(FunctionalUnit):
 
-    def __init__(self, unit_system: 'UnitSystem', location: Tuple[int, int]):
+    def __init__(self, unit_system: 'UnitSystem', location: Location):
         super().__init__(unit_system, location)
         self.received_sheets = []
         self.callbacks: List[Callable] = []

@@ -1,8 +1,8 @@
 from threading import Thread
 from typing import Tuple, List, Callable
 
-from Units.functional_unit import FunctionalUnit
 from Sheets.sheet import Sheet
+from Units.functional_unit import FunctionalUnit
 from constants import Direction
 
 
@@ -25,4 +25,3 @@ class InputPaperStack(FunctionalUnit):
 
     def unregister_on_take_event(self, func: Callable):
         self.callbacks.remove(func)
-

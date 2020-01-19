@@ -1,6 +1,8 @@
-import pykka
-from Demos import urns
 import time
+
+import pykka
+
+from Demos import urns
 
 
 class PongActor(pykka.ThreadingActor):
