@@ -8,3 +8,6 @@ class Sheet(AbstractSheet):
 
     def plot(self, color: Color):
         self.plots[color] += 1
+
+    def __str__(self):
+        return ', '.join(str(item) for item in self.plots.items())

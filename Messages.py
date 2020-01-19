@@ -1,23 +1,24 @@
 from enum import Enum
-
-from Types.custom_types import Location
-from typing import Tuple, Dict
+from typing import Dict
 
 from pykka import ActorRef
 
+from Sheets.sheet_order import SheetOrder
+from Types.custom_types import Location
 
-class Message:
-    pass
 
-
-class ObjectMessage:
-    def __init__(self, body: object):
-        self.body = body
+# class Message:
+#     pass
+#
+#
+# class ObjectMessage:
+#     def __init__(self, body: object):
+#         self.body = body
 
 
 class InstructionRequest:
-    def __init__(self, location):
-        self.location = location
+    def __init__(self, actor_ref: ActorRef):
+        self.actor_ref = actor_ref
 
 
 class Action(Enum):
@@ -28,20 +29,22 @@ class Action(Enum):
 
 class InteractWithMessage:
 
-    def __init__(self, location: Location, action: Action, wait=False):
+    def __init__(self, location: Location, action: Action, actor_ref: ActorRef = None):
         self.location = location
         self.action = action
-        self.wait = wait
+        self.actor_ref = actor_ref
 
 
-class PlotMessage:
-    def __init__(self, requesting_actor: ActorRef):
-        self.requesting_actor = requesting_actor
+# class PlotMessage:
+#     def __init__(self, requesting_actor: ActorRef):
+#         self.requesting_actor = requesting_actor
+#
+#
+# class PlotDoneMessage:
+#     pass
 
-
-class PlotDoneMessage:
+class PerformActionMessage:
     pass
-
 
 class RegistrationMessage:
     def __init__(self, actor_ref: ActorRef, location: Location, attributes: Dict[str, object] = {}):
@@ -50,13 +53,23 @@ class RegistrationMessage:
         self.attributes = attributes
 
 
+class UnRegistrationMessage:
+    def __init__(self, actor_ref: ActorRef):
+        self.actorRef = actor_ref
+
+
 class RequestOrderMessage:
     def __init__(self, actor_ref: ActorRef):
         self.actor_ref = actor_ref
 
 
-class WaitMessage:
-    pass
+#
+# class WaitMessage:
+#     pass
+
+class SheetOrderMessage:
+    def __init__(self, order: SheetOrder):
+        self.order = order
 
 
 class ReminderMessage:

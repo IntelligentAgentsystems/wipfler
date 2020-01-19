@@ -1,3 +1,4 @@
+import logging
 import time
 
 from pykka import ThreadingActor, ActorRef
@@ -11,7 +12,10 @@ class ReminderActor(ThreadingActor):
         self.interval_seconds = invterval_seconds
         super().__init__()
 
-    def _actor_loop(self):
-        super()._actor_loop()
+    def on_start(self):
         time.sleep(self.interval_seconds)
         self.parent.tell(ReminderMessage())
+        self.stop()
+
+    def on_failure(self, exception_type, exception_value, traceback):
+        logging.log(logging.ERROR, exception_type(exception_value))

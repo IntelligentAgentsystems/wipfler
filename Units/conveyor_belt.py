@@ -11,6 +11,7 @@ class ConveyorBelt(FunctionalUnit):
                  turn_duration_seconds: float = 2):
         super().__init__(unit_system, location)
         self.sheet = None
+        self.unit_system = unit_system
         self.direction: Direction = initial_direction
         self.turn_duration_seconds = turn_duration_seconds
         self.last_turn_start_seconds = 0

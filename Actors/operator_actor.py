@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, List
 
 from Actors.supervisor_actor import SupervisorActor
@@ -10,12 +11,16 @@ from Units.functional_unit import FunctionalUnit
 
 class OperatorActor(ThreadingActor):
 
-    def __init__(self, functional_unit: FunctionalUnit):
+    def __init__(self):
         super().__init__()
-        self.functional_unit = functional_unit
-        self.unit_location = functional_unit.location
-        self.unit_routing_info: UnitRoutingMap = {}
 
-    def _shout_out(self, attributes: Dict[str, object]):
-        supervisor = ActorRegistry().get_by_class(SupervisorActor)[0]
-        supervisor.tell(RegistrationMessage(self.actor_ref, self.unit_location, attributes))
+    def _register(self, unit_location: Location, attributes: Dict[str, object]):
+        for supervisor in ActorRegistry().get_by_class(SupervisorActor):
+            supervisor.tell(RegistrationMessage(self.actor_ref, unit_location, attributes))
+
+    def _unregister(self):
+        for supervisor in ActorRegistry().get_by_class(SupervisorActor):
+            supervisor.tell(UnRegistrationMessage(self.actor_ref))
+
+    def on_failure(self, exception_type, exception_value, traceback):
+        logging.log(logging.ERROR, exception_type(exception_value))
