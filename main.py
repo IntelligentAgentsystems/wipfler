@@ -1,6 +1,8 @@
 import logging
 from typing import List
 
+import cv2
+
 from Actors.conveyor_actor import ConveyorActor
 from Actors.input_actor import InputActor
 from Actors.output_actor import OutputActor
@@ -42,7 +44,10 @@ def main():
         SheetOrder({Color.Yellow: 1, Color.Green: 1})
     ]:
         supervisor.tell(SheetOrderMessage(sheet_order))
-    SleepyActor.start(500).stop()
+    key = 0
+    while key != 27:
+        unit_system.update_image()
+        key = cv2.waitKey()
     for w_actor in worker_actors:
         w_actor.stop()
     supervisor.stop()

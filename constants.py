@@ -7,6 +7,8 @@ CONVEYOR_TYPE = "conveyor"
 INPUTPAPERSTACK_TYPE = "inputpaperstack"
 OUTPUTPAPERSTACK_TYPE = "outpaperstack"
 
+IMAGE_SIZE = 200
+
 
 class Direction(Enum):
     North = 0

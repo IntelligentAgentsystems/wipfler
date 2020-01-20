@@ -9,8 +9,6 @@ from Units.unit_system import UnitSystem
 
 
 class FunctionalUnitTest(unittest.TestCase):
-    def __init__(self):
-        self.done = Future()
 
     def test_unit_creation(self):
         sys = UnitSystem()

@@ -9,11 +9,19 @@ from Units.functional_unit import FunctionalUnit
 from Units.input_paper_stack import InputPaperStack
 from Units.output_paper_stack import OutputPaperStack
 from Units.plotter import Plotter
+import cv2
+import numpy as np
+import constants as const
 
 
 class UnitSystem:
     def __init__(self):
         self.unit_locations: Dict[Location, FunctionalUnit] = {}
+        self.image = np.zeros((const.IMAGE_SIZE * 3, const.IMAGE_SIZE * 4, 3))
+        self.update_image()
+
+    def update_image(self):
+        cv2.imshow('unit_system', self.image)
 
     def drop_to_unit_at(self, sheet: Sheet, location: Location, source_location: Location):
         if location not in self.unit_locations:

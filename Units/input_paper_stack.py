@@ -1,15 +1,21 @@
 from threading import Thread
 from typing import Tuple, List, Callable
 
+import cv2
+
 from Sheets.sheet import Sheet
+from Types.custom_types import Location
 from Units.functional_unit import FunctionalUnit
 from constants import Direction
+import constants as const
 
+
+model = cv2.imread(r'graphics\paper_stack.png', cv2.IMREAD_COLOR)
 
 class InputPaperStack(FunctionalUnit):
 
-    def __init__(self, unit_system: 'UnitSystem', location: Tuple[int, int]):
-        super().__init__(unit_system, location)
+    def __init__(self, unit_system: 'UnitSystem', location: Location):
+        super().__init__(unit_system, location, model)
         self.callbacks: List[Callable] = []
 
     def on_take(self, direction: Direction) -> Sheet:
