@@ -7,8 +7,8 @@ from skimage import transform
 import util
 from Units.functional_unit import *
 
-model = cv2.imread(r'graphics\conveyor_empty.png', cv2.IMREAD_COLOR)
-model_sheet = cv2.imread(r'graphics\conveyor_sheet.png', cv2.IMREAD_COLOR)
+model = cv2.imread(r'graphics\conveyor_empty.png', cv2.IMREAD_COLOR).astype(float)
+model_sheet = cv2.imread(r'graphics\conveyor_sheet.png', cv2.IMREAD_COLOR).astype(float)
 direction_to_rotation = {
     Direction.North: 0,
     Direction.East: 270,
@@ -53,7 +53,7 @@ class ConveyorBelt(FunctionalUnit):
         if self.is_turning():
             raise ConveyorTurningError(self)
         self.last_turn_start_seconds = time.time()
-        Thread(target=self.do_animation, args=[(model, model_sheet)[self.sheet is not None], 90]).start()
+        Thread(target=self.do_animation, args=[(model, model_sheet)[self.sheet is not None], self.direction, 90]).start()
         self.direction = Direction((self.direction.value + 3) % 4)
 
     def on_receive(self, sheet: Sheet, direction: Direction):

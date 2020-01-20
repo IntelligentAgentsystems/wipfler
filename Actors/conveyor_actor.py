@@ -72,8 +72,14 @@ class ConveyorActor(OperatorActor):
 
     def turn_towards(self, location: Location):
         target_direction = util.relative_direction_of(location, self.conveyor.location)
+        steps_over_cw = 0
+        tmp_dir = self.conveyor.direction
+        while tmp_dir != target_direction:
+            steps_over_cw += 1
+            tmp_dir = const.Direction((tmp_dir.value + 1) % 4)
+        turn_cmd = (self.conveyor.turn_clockwise, self.conveyor.turn_counter_clockwise)[steps_over_cw > 2]
         while self.conveyor.direction != target_direction:
-            self.conveyor.turn_clockwise()
+            turn_cmd()
             while self.conveyor.is_turning():
                 pass
         logging.log(logging.DEBUG, f'CVB: Conveyor at {self.conveyor.location} now facing {self.conveyor.direction}')
