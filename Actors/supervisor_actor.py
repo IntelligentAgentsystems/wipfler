@@ -4,8 +4,9 @@ from typing import List, Dict
 from pykka import ThreadingActor, ActorRef
 
 import constants as const
+import util
 from Messages import RegistrationMessage, InteractWithMessage, Action, InstructionRequest, SheetOrderMessage, \
-    InteractWithPlotterMessage, InteractWithConveyorMessage
+    InteractWithPlotterMessage, InteractWithConveyorMessage, TurnTowardsMessage
 from Sheets.sheet_order import SheetOrder
 from Types.custom_types import Location
 from util import distance
@@ -94,6 +95,7 @@ class SupervisorActor(ThreadingActor):
                 order = self.open_orders.pop(0)
                 self.active_orders[actor_ref] = order
             else:
+                actor_ref.tell(TurnTowardsMessage(util.move_location(self.actor_locations[actor_ref][0], const.Direction.West)))
                 logging.log(logging.DEBUG, f'SPV: Nothing to do for Actor at {self.actor_locations[actor_ref]}')
 
     def _handle_sheet_order_message(self, message: SheetOrderMessage):

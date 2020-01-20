@@ -48,6 +48,7 @@ def main():
     while key != 27:
         unit_system.update_image()
         key = cv2.waitKey()
+    cv2.destroyAllWindows()
     for w_actor in worker_actors:
         w_actor.stop()
     supervisor.stop()
