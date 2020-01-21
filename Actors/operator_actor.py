@@ -21,3 +21,5 @@ class OperatorActor(ThreadingActor):
 
     def on_failure(self, exception_type, exception_value, traceback):
         logging.log(logging.ERROR, exception_type(exception_value))
+        self.on_stop()
+        self.on_start()

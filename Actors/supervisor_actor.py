@@ -6,7 +6,7 @@ from pykka import ThreadingActor, ActorRef
 import constants as const
 import util
 from Messages import RegistrationMessage, InteractWithMessage, Action, InstructionRequest, SheetOrderMessage, \
-    InteractWithPlotterMessage, InteractWithConveyorMessage, TurnTowardsMessage
+    InteractWithPlotterMessage, InteractWithConveyorMessage, TurnTowardsMessage, UnRegistrationMessage
 from Sheets.sheet_order import SheetOrder
 from Types.custom_types import Location
 from util import distance
@@ -40,6 +40,9 @@ class SupervisorActor(ThreadingActor):
             if conveyor_attribute in attributes.items() and other_actor_ref not in self.active_orders.keys():
                 self.actor_ref.tell(InstructionRequest(other_actor_ref))
                 logging.log(logging.DEBUG, f'SPV: Reactivated Conveyor Actor at {other_loc} because of new Actor')
+
+    def _handle_unregistration_message(self, message: UnRegistrationMessage):
+        del self.actor_locations[message.actorRef]
 
     def _handle_instruction_request(self, message: InstructionRequest):
         logging.log(logging.DEBUG, f'SPV: Actor at {self.actor_locations[message.actor_ref][0]} requested Instruction')
@@ -110,6 +113,8 @@ class SupervisorActor(ThreadingActor):
     def on_receive(self, message):
         if isinstance(message, RegistrationMessage):
             self._handle_registration_message(message)
+        elif isinstance(message, UnRegistrationMessage):
+            self._handle_unregistration_message(message)
         elif isinstance(message, InstructionRequest):
             self._handle_instruction_request(message)
         elif isinstance(message, SheetOrderMessage):
